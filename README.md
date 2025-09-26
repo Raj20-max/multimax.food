@@ -28,11 +28,12 @@ MultiMax.food – Beyond Taste, Beyond Convenience. Browse menus, add favorites,
 ---
 
 ## Live Demo
-Check it out here: [Multimax.food](https://your-github-Raj20-max.github.io/multimax.food/)  
+Check it out here: [Multimax.food]( https://github.com/Raj20-max/multimax.food.git/)  
 
 ---
 
 ## How to Run Locally
 1. Clone the repo:
 ```bash
-git clone https://github.com/your-github-Raj20-max/multimax.food.git
+git clone https://github.com/Raj20-max/multimax.food.git
+
