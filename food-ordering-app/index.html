@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Food Ordering App</title>
+<link rel="stylesheet" href="styles/main.css">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to right, #43c6ac, #6ce3bc);
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar */
+.navbar {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  padding: 1rem;
+  background: #43c6ac;
+}
+.nav {
+  display: flex;
+  justify-content: space-between; /* brand left, links right */
+  align-items: center;
+  padding: 0.7rem 1rem;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  max-width: 1100px;
+  margin: 0 auto;
+  gap: 1rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.nav-links a {
+  color: #012;
+  text-decoration: none;
+  padding: 0.4rem 0.7rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.nav-links a.active {
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+header h1 {
+  text-align: center;
+  margin: 1rem 0;
+  color: #1d1d1d; /* change to any color you want */
+  font-size: 2rem; /* optional, for bigger text */
+}
+.navbar li a {
+  text-decoration: none;
+  color: rgb(8, 8, 8);
+  font-weight: bold;
+}
+.navbar li a.active {
+  text-decoration: underline;
+}
+
+header h1 {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+#banner {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: #15c3be;
+  margin: auto;
+}
+
+#search-bar {
+  width: 70%;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.quick-categories {
+  margin-top: 1rem;
+}
+.quick-categories button {
+  padding: 0.5rem 1rem;
+  margin: 0 0.3rem;
+  border: none;
+  border-radius: 5px;
+  background: #43c6ac;
+  color: white;
+  cursor: pointer;
+}
+
+#suggestions {
+  width: 90%;
+  margin: 1rem auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(67,198,172,0.2);
+  padding: 1rem;
+}
+
+#food-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  justify-content: center;
+}
+
+.food-item {
+  width: 150px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.food-item:hover {
+  transform: scale(1.05);
+}
+.food-item img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* Popup Styles */
+.popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+  position: relative;
+}
+
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+}
+
+.btn-place {
+  background-color: #7095d1;
+  color: white;
+  padding: 10px 15px;
+  border: 2px solid #43c6ac;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-place:hover {
+  background-color: #43c6ac;
+}
+
+.btn-menu {
+  background-color: #7095d1;
+  color: #e5ebea;
+  border: 2px solid #43c6ac;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-menu:hover {
+  background-color: #43c6ac;
+  color: white;
+}
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<header class="nav" role="banner">
+  <div class="brand">Multimax<span style="color:var(--accent-2); font-weight:800"> • Food</span></div>
+  <nav class="nav-links" role="navigation" aria-label="Main Navigation">
+    <a href="index.html" class="active">Home</a>
+    <a href="menu.html">Menu</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="#" id="wishlist-btn">❤️</a>
+    <a href="#" id="orders-btn">📜 </a>
+  </nav>
+  
+</header>
+<header>
+<h1>Welcome to MultiMax.Food</h1>
+</header>
+
+
+
+<section id="banner">
+  <div class="banner-content">
+    <h2>Delicious Food Delivered Fast!</h2>
+    <input type="text" id="search-bar" placeholder="Search for food, cuisine, or shop...">
+    <div class="quick-categories">
+      <button onclick="quickCategory('veg')">Veg</button>
+      <button onclick="quickCategory('nonveg')">Non Veg</button>
+      <button onclick="quickCategory('indian')">Indian</button>
+      <button onclick="quickCategory('western')">Western</button>
+    </div>
+  </div>
+</section>
+
+<main>
+  <section id="suggestions">
+    <h2>Food Suggestions</h2>
+    <div id="food-suggestions"></div>
+  </section>
+</main>
+
+<footer>
+  <p style="text-align:center;">&copy; 2025 Food Ordering App</p>
+</footer>
+
+<!-- Popup -->
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <span class="close" onclick="closePopup()">&times;</span>
+    <h2 id="popup-name"></h2>
+    <p>Price: <span id="popup-price"></span></p>
+    <p>Rating: <span id="popup-rating"></span></p>
+    <p>Shop: <span id="popup-shop"></span></p>
+    <div class="popup-buttons">
+      <button class="btn-place" onclick="placeOrder()">Place Order</button>
+      <button class="btn-menu" onclick="showInMenu()">Show in Menu</button>
+    </div>
+  </div>
+</div>
+
+<!-- other content like footer, popup, scripts -->
+
+<!-- Wishlist Modal -->
+<div id="wishlist-modal" class="popup">
+  <div class="popup-content">
+    <span class="close" id="close-wishlist">&times;</span>
+    <h2>My Wishlist</h2>
+    <div id="wishlist-items"></div>
+  </div>
+</div>
+
+<!-- Orders Modal -->
+<div id="orders-modal" class="popup">
+  <div class="popup-content">
+    <span class="close" id="close-orders">&times;</span>
+    <h2>My Orders</h2>
+    <div id="orders-items"></div>
+  </div>
+</div>
+
+</body>
+</html>
+
+
+
+
+<script>
+const foods = [
+  {name: 'Pizza', price: '$12', rating: '4.5⭐', shop: 'Pizza Hut', img: 'images/pizza2.jpg', category:'veg'},
+  {name: 'Burger', price: '$8', rating: '4.2⭐', shop: 'McDonalds', img: 'images/burger.jpg', category:'nonveg'},
+  {name: 'Sushi', price: '$15', rating: '4.8⭐', shop: 'Sushi World', img: 'images/sushi.jpg', category:'nonveg'},
+  {name: 'Pasta', price: '$10', rating: '4.3⭐', shop: 'Italiano', img: 'images/pasta.jpg', category:'veg'},
+  {name: 'Sandwich', price: '$6', rating: '4.1⭐', shop: 'Subway', img: 'images/sandwtch.jpg', category:'veg'},
+  {name: 'Tacos', price: '$9', rating: '4.4⭐', shop: 'Taco Bell', img: 'images/tacos.jpg', category:'nonveg'},
+  {name: 'Dosa', price: '$5', rating: '4.6⭐', shop: 'Indian Spice', img: 'images/dosa.jpg', category:'veg'},
+  {name: 'Paneer Butter Masala', price: '$11', rating: '4.7⭐', shop: 'Curry House', img: 'images/panner.jpg', category:'veg'},
+  {name: 'Ice Cream', price: '$4', rating: '4.9⭐', shop: 'Cold Stone', img: 'images/ice.jpg', category:'western'},
+  {name: 'Fried Rice', price: '$7', rating: '4.3⭐', shop: 'Wok & Roll', img: 'images/fired.jpg', category:'indian'},
+  {name: 'Noodles', price: '$6', rating: '4.2⭐', shop: 'Noodle House', img: 'images/noodles.jpg', category:'nonveg'},
+  {name: 'Chicken Wings', price: '$12', rating: '4.5⭐', shop: 'Buffalo Grill', img: 'images/wings.jpg', category:'nonveg'},
+  {name: 'Chocolate Cake', price: '$5', rating: '4.8⭐', shop: 'Sweet Tooth', img: 'images/chococake.jpg', category:'western'},
+  {name: 'Cold Drink', price: '$2', rating: '4.3⭐', shop: 'Coke Cafe', img: 'images/cold.jpg', category:'western'}
+];
+
+let menuOrders = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  let wishlist = [];
+
+  // Render food suggestions
+  function renderSuggestions(list = foods) {
+    const container = document.getElementById('food-suggestions');
+    container.innerHTML = '';
+    list.forEach(food => {
+      const div = document.createElement('div');
+      div.classList.add('food-item');
+      div.innerHTML = `
+        <img src="${food.img}" alt="${food.name}">
+        <h3>${food.name}</h3>
+      `;
+      div.onclick = () => showPopup(food);
+      container.appendChild(div);
+    });
+  }
+
+  // Popup
+  function showPopup(food) {
+    document.getElementById('popup-name').innerText = food.name;
+    document.getElementById('popup-price').innerText = food.price;
+    document.getElementById('popup-rating').innerText = food.rating;
+    document.getElementById('popup-shop').innerText = food.shop;
+    document.getElementById('popup').style.display = 'flex';
+  }
+
+  function closePopup() {
+    document.getElementById('popup').style.display = 'none';
+  }
+
+  // Place Order
+  function placeOrder() {
+    const foodName = document.getElementById('popup-name').innerText;
+    const foodPrice = document.getElementById('popup-price').innerText;
+    closePopup();
+    alert(`Order Placed Successfully for ${foodName}`);
+    menuOrders.push({name: foodName, price: foodPrice});
+  }
+
+  // Show in Menu
+  function showInMenu() {
+    const foodName = document.getElementById('popup-name').innerText;
+    closePopup();
+    window.location.href = `menu.html?item=${encodeURIComponent(foodName)}`;
+  }
+
+  // Search bar
+  document.getElementById('search-bar').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    const filtered = foods.filter(f => f.name.toLowerCase().includes(q) || f.shop.toLowerCase().includes(q));
+    renderSuggestions(filtered);
+  });
+
+  // Quick categories
+  function quickCategory(type) {
+    const filtered = foods.filter(f => f.category === type);
+    renderSuggestions(filtered);
+  }
+  window.quickCategory = quickCategory; // Make accessible from HTML buttons
+
+  // Wishlist Modal
+  document.getElementById('wishlist-btn').onclick = () => {
+    const container = document.getElementById('wishlist-items');
+    container.innerHTML = wishlist.length 
+      ? wishlist.map(item => `<p>${item.name} - ${item.price}</p>`).join('')
+      : '<p>No items in wishlist yet!</p>';
+    document.getElementById('wishlist-modal').style.display = 'flex';
+  };
+  document.getElementById('close-wishlist').onclick = () => {
+    document.getElementById('wishlist-modal').style.display = 'none';
+  };
+
+  // Orders Modal
+  document.getElementById('orders-btn').onclick = () => {
+    const container = document.getElementById('orders-items');
+    container.innerHTML = menuOrders.length
+      ? menuOrders.map(item => `<p>${item.name} - ${item.price}</p>`).join('')
+      : '<p>No orders placed yet!</p>';
+    document.getElementById('orders-modal').style.display = 'flex';
+  };
+  document.getElementById('close-orders').onclick = () => {
+    document.getElementById('orders-modal').style.display = 'none';
+  };
+
+  // Wishlist button inside popup
+  const popupButtons = document.querySelector('.popup-buttons');
+  const wishlistBtn = document.createElement('button');
+  wishlistBtn.className = 'btn-menu';
+  wishlistBtn.innerText = 'Add to Wishlist';
+  wishlistBtn.onclick = () => {
+    const foodName = document.getElementById('popup-name').innerText;
+    const foodPrice = document.getElementById('popup-price').innerText;
+    wishlist.push({name: foodName, price: foodPrice});
+    alert(`${foodName} added to Wishlist!`);
+  };
+  popupButtons.appendChild(wishlistBtn);
+
+  // Assign global functions for popup buttons
+  window.showPopup = showPopup;
+  window.closePopup = closePopup;
+  window.placeOrder = placeOrder;
+  window.showInMenu = showInMenu;
+
+  // Initial render
+  renderSuggestions();
+});
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

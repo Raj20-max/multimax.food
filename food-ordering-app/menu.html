@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Menu — Food Ordering App</title>
+<style>
+  :root{
+    --accent:#43c6ac;
+    --accent-2:#6ce3bc;
+    --card:#ffffff;
+    --muted:#666;
+    --danger:#ff4757;
+    --cta:#ff7f50;
+    --blue:#1e90ff;
+    --glass: rgba(255,255,255,0.85);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter, system-ui, Arial, sans-serif;
+    background: linear-gradient(120deg,var(--accent),var(--accent-2));
+    -webkit-font-smoothing:antialiased;
+    color:#222;
+    min-height:100vh;
+  }
+
+  .nav {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:1rem;
+    max-width:1100px;
+    margin:0 auto;
+    padding:0.7rem 1rem;
+    background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .brand { font-weight:700; letter-spacing:0.2px; color:#052; }
+  .nav-links { display:flex; gap:1rem; align-items:center; }
+  .nav-links a {
+    color:#012; text-decoration:none; padding:0.4rem 0.7rem; border-radius:8px; font-weight:600;
+  }
+  .nav-links a.active { background:var(--glass); box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+
+  .container { max-width:1100px; margin:1rem auto 3rem; padding:0 1rem; }
+
+  .controls { display:flex; flex-direction:column; gap:0.6rem; align-items:center; margin:0.6rem 0 1rem; }
+  .controls-row { display:flex; gap:0.6rem; width:100%; justify-content:center; }
+  input[type="search"], select {
+    width:360px;
+    max-width:90%;
+    padding:0.55rem 0.8rem;
+    border-radius:10px;
+    border:1px solid rgba(0,0,0,0.12);
+    outline:none;
+    font-size:0.95rem;
+    background:rgba(255,255,255,0.95);
+  }
+  input[type="search"]::placeholder { color: #999; }
+
+  .product-list { display:flex; flex-direction:column; gap:1rem; margin-top:0.6rem; }
+
+  .card {
+    display:flex;
+    gap:1rem;
+    align-items:flex-start;
+    background:var(--card);
+    border-radius:12px;
+    padding:0.7rem;
+    box-shadow: 0 6px 20px rgba(6,8,12,0.08);
+    transition: transform 220ms ease, box-shadow 220ms ease;
+    overflow:hidden;
+  }
+  .card:hover { transform: translateY(-6px); box-shadow:0 12px 30px rgba(6,8,12,0.12); }
+
+  .thumb { width:140px; height:110px; flex:0 0 140px; border-radius:10px; overflow:hidden; background:#eee; position:relative; }
+  .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+
+  .info { flex:1; min-width:0; }
+  .title-row { display:flex; justify-content:space-between; align-items:start; gap:0.6rem; }
+  .name { font-size:1.05rem; font-weight:700; margin:0; }
+  .shop { font-size:0.88rem; color:var(--muted); margin-top:4px; }
+  .meta { display:flex; gap:0.8rem; margin-top:6px; flex-wrap:wrap; color:var(--muted); font-size:0.9rem; }
+  .price { font-weight:800; color:#111; font-size:1rem; }
+
+  .actions { width:200px; display:flex; flex-direction:column; gap:0.6rem; align-items:center; justify-content:center; }
+  .qty-box { display:flex; align-items:center; gap:0.5rem; border-radius:8px; padding:0.25rem; background:linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01)); }
+  .qty-box button {
+    width:34px; height:34px; border-radius:8px; border:none; cursor:pointer;
+    font-size:1.05rem; font-weight:700; background:var(--accent); color:#fff;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .qty { min-width:20px; text-align:center; display:inline-block; font-weight:700; }
+
+  .actionBtns { display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center; }
+  .btn { border:0; padding:0.45rem 0.6rem; border-radius:8px; cursor:pointer; font-weight:700; box-shadow:0 6px 18px rgba(0,0,0,0.06); transition: transform 130ms ease; font-size:0.86rem; }
+  .btn:active { transform:translateY(1px); }
+  .btn.cart { background:var(--cta); color:white; }
+  .btn.order { background:var(--blue); color:white; }
+  .btn.heart { background:transparent; color:var(--danger); border:1px solid rgba(255,71,87,0.15); }
+
+  .badge { background: #f5f5f5; padding: 0.18rem 0.5rem; border-radius:6px; font-size:0.82rem; color:var(--muted); }
+
+  .empty { text-align:center; color:#222; padding:2rem 0.5rem; font-weight:600; }
+
+  @media (max-width:880px){
+    .nav { padding:0.6rem 0.8rem; }
+    .actions { width:160px; }
+    .thumb { flex:0 0 120px; width:120px; height:90px; }
+    input[type="search"], select { width:88%; }
+  }
+  @media (max-width:560px){
+    .card { flex-direction:column; gap:0.6rem; align-items:stretch; }
+    .actions { width:100%; flex-direction:row; justify-content:space-between; }
+    .qty-box button { width:34px; height:34px; }
+    .thumb { width:100%; height:200px; flex:0 0 auto; }
+  }
+
+  /* Popup styling */
+  .popup { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9999; }
+  .popup-content { background:#fff; padding:1rem 1.5rem; border-radius:10px; width:90%; max-width:400px; position:relative; }
+  .popup-content .close { position:absolute; top:10px; right:14px; font-size:1.5rem; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<header class="nav" role="banner">
+  <div class="brand">Multimax<span style="color:var(--accent-2); font-weight:800"> • Food</span></div>
+  <nav class="nav-links" role="navigation" aria-label="Main Navigation">
+    <a href="index.html">Home</a>
+    <a href="menu.html" class="active">Menu</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="#" id="wishlist-btn">❤️</a>
+    <a href="#" id="orders-btn">📜</a>
+  </nav>
+</header>
+
+<main class="container" role="main">
+  <section class="controls" aria-label="Search and Sort">
+    <div class="controls-row">
+      <input id="search" type="search" placeholder="Search food or shop..." aria-label="Search food or shop">
+    </div>
+    <div class="controls-row">
+      <select id="sort" aria-label="Sort products">
+        <option value="">Sort By</option>
+        <option value="price-asc">Price: Low → High</option>
+        <option value="price-desc">Price: High → Low</option>
+        <option value="rating-desc">Rating: High → Low</option>
+      </select>
+    </div>
+  </section>
+
+  <section id="productList" class="product-list" aria-live="polite"></section>
+  <div id="emptyState" class="empty" style="display:none">No items found.</div>
+</main>
+
+<!-- Wishlist & Orders modals -->
+<div id="wishlist-modal" class="popup">
+  <div class="popup-content">
+    <span class="close" id="close-wishlist">&times;</span>
+    <h2>My Wishlist</h2>
+    <div id="wishlist-items"></div>
+  </div>
+</div>
+
+<div id="orders-modal" class="popup">
+  <div class="popup-content">
+    <span class="close" id="close-orders">&times;</span>
+    <h2>My Orders</h2>
+    <div id="orders-items"></div>
+  </div>
+</div>
+
+<script>
+// ===== PRODUCTS DATA =====
+const products = [
+  { id:1, name:'Margherita Pizza', price:149, rating:4.6, shop:'Pizza Hut', delivery:'30-40 min', charges:1.5, img:'images/pizza3.jpg' },
+  { id:2, name:'Veggie Burger', price:100, rating:4.3, shop:'Burger House', delivery:'20-30 min', charges:1.0, img:'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=60' },
+  { id:3, name:'Chicken Biryani', price:250, rating:4.7, shop:'Hyderabadi', delivery:'25-35 min', charges:1.8, img:'images/chickenbiriyani.jpg' },
+  { id:4, name:'Paneer Butter Masala', price:220, rating:4.8, shop:'Curry House', delivery:'25-30 min', charges:1.2, img:'images/panner.jpg' },
+  { id:5, name:'Sushi Platter', price:700, rating:4.9, shop:'Sushi World', delivery:'40-50 min', charges:2.5, img:'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=800&q=60' },
+  { id:6, name:'Pasta Alfredo', price:290, rating:4.4, shop:'Italiano', delivery:'20-30 min', charges:1.0, img:'https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=800&q=60' },
+  { id:7, name:'Masala Dosa', price:80, rating:4.6, shop:'South Spice', delivery:'15-25 min', charges:0.8, img:'images/dosa.jpg' },
+  { id:8, name:'Tacos Trio', price:250, rating:4.5, shop:'Taco Bell', delivery:'20-30 min', charges:1.1, img:'images/tacos.jpg' },
+  { id:9, name:'Chocolate Sundae', price:120, rating:4.8, shop:'Cold Stone', delivery:'10-20 min', charges:0.5, img:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=60' },
+  { id:10, name:'Chicken Wings (6 pcs)', price:250, rating:4.4, shop:'Buffalo Grill', delivery:'30-40 min', charges:1.6, img:'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=800&q=60' }
+  // ... add all other products here as in your original code
+];
+
+// ===== APP STATE =====
+let cart = {};
+let wishlist = new Set();
+let ordersList = [];
+
+// ===== HELPERS =====
+const $ = sel => document.querySelector(sel);
+const formatPrice = p => '₹' + p.toFixed(2);
+function escapeHtml(text){ return String(text).replace(/[&<>"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s])); }
+function debounce(fn, wait=200){ let t; return (...args)=>{ clearTimeout(t); t = setTimeout(()=>fn(...args), wait); }; }
+
+// ===== RENDER PRODUCTS =====
+function renderProducts(list){
+  const container = $('#productList');
+  container.innerHTML='';
+  if(!list.length){ $('#emptyState').style.display='block'; return; } else { $('#emptyState').style.display='none'; }
+
+  list.forEach(prod=>{
+    const qty = cart[prod.id] || 1;
+    const inWish = wishlist.has(prod.id);
+    const card = document.createElement('article');
+    card.className='card'; card.dataset.id=prod.id;
+    card.innerHTML=`
+      <div class="thumb"><img src="${prod.img}" alt="${escapeHtml(prod.name)}"></div>
+      <div class="info">
+        <div class="title-row">
+          <div style="min-width:0">
+            <h3 class="name">${escapeHtml(prod.name)}</h3>
+            <div class="shop">${escapeHtml(prod.shop)}</div>
+            <div class="meta" style="margin-top:8px">
+              <span class="badge">${prod.rating} ⭐</span>
+              <span class="badge">${prod.delivery}</span>
+              <span class="badge">Delivery ₹${prod.charges}</span>
+              <span style="margin-left:0.4rem" class="price">${formatPrice(prod.price)}</span>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:0.86rem; color:var(--muted)">Estimated</div>
+            <div style="font-weight:800; margin-top:6px">${formatPrice(prod.price)}</div>
+          </div>
+        </div>
+        <div style="margin-top:10px; color:var(--muted); font-size:0.92rem">
+          <div>Delicious & fresh — made to order. Click + / - to update quantity.</div>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="qty-box">
+          <button class="qty-dec" data-id="${prod.id}">−</button>
+          <div class="qty" data-id="${prod.id}">${qty}</div>
+          <button class="qty-inc" data-id="${prod.id}">+</button>
+        </div>
+        <div class="actionBtns" style="margin-top:6px; width:100%; justify-content:center;">
+          <button class="btn cart" data-id="${prod.id}">Add to Cart</button>
+          <button class="btn heart" data-id="${prod.id}" aria-pressed="${inWish? 'true':'false'}">${inWish? '♥':'♡'}</button>
+        </div>
+        <button class="btn order" style="width:100%; margin-top:8px" data-id="${prod.id}">Place Order</button>
+      </div>
+    `;
+    card.querySelector('.qty-inc').addEventListener('click',()=>changeQty(prod.id,+1));
+    card.querySelector('.qty-dec').addEventListener('click',()=>changeQty(prod.id,-1));
+    card.querySelector('.btn.cart').addEventListener('click',()=>addToCart(prod.id));
+    card.querySelector('.btn.heart').addEventListener('click',e=>toggleWish(prod.id,e.target));
+    card.querySelector('.btn.order').addEventListener('click',()=>placeOrder(prod.id));
+    container.appendChild(card);
+  });
+}
+
+// ===== CART / WISHLIST / ORDERS =====
+function changeQty(id,delta){ const current=cart[id]||1; const next=Math.max(1,current+delta); cart[id]=next; document.querySelectorAll('.qty').forEach(el=>{ if(Number(el.dataset.id)===id) el.textContent=next; }); }
+function addToCart(id){ cart[id]=cart[id]?cart[id]+1:1; showToast('Added to cart ✔'); document.querySelectorAll('.qty').forEach(el=>{ if(Number(el.dataset.id)===id) el.textContent=cart[id]; }); }
+function toggleWish(id,btn){ if(wishlist.has(id)){ wishlist.delete(id); btn.textContent='♡'; btn.setAttribute('aria-pressed','false'); showToast('Removed from wishlist'); } else { wishlist.add(id); btn.textContent='♥'; btn.setAttribute('aria-pressed','true'); showToast('Added to wishlist'); } }
+function placeOrder(id){ const prod=products.find(p=>p.id===id); const qty=cart[id]||1; ordersList.push({id:prod.id,name:prod.name,price:prod.price,qty}); showToast(`Order placed: ${prod.name} x${qty}`); }
+
+// ===== TOAST =====
+function showToast(msg){ const t=document.createElement('div'); t.textContent=msg; t.style.cssText='position:fixed;bottom:15px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:0.6rem 1rem;border-radius:6px;box-shadow:0 3px 10px rgba(0,0,0,0.15);opacity:0;transition:opacity 0.3s'; document.body.appendChild(t); setTimeout(()=>t.style.opacity='1',10); setTimeout(()=>{ t.style.opacity='0'; setTimeout(()=>t.remove(),300); },1500); }
+
+// ===== SEARCH / SORT =====
+$('#search').addEventListener('input',debounce(()=>filterAndSort(),200));
+$('#sort').addEventListener('change',()=>filterAndSort());
+function filterAndSort(){
+  const q=$('#search').value.toLowerCase();
+  let filtered=products.filter(p=>p.name.toLowerCase().includes(q) || p.shop.toLowerCase().includes(q));
+  const sort=$('#sort').value;
+  if(sort==='price-asc') filtered.sort((a,b)=>a.price-b.price);
+  else if(sort==='price-desc') filtered.sort((a,b)=>b.price-a.price);
+  else if(sort==='rating-desc') filtered.sort((a,b)=>b.rating-b.rating);
+  renderProducts(filtered);
+}
+
+// ===== POPUPS =====
+$('#wishlist-btn').addEventListener('click',()=>{
+  $('#wishlist-items').innerHTML = wishlist.size ? Array.from(wishlist).map(id=>{ const p=products.find(p=>p.id===id); return `<p>${escapeHtml(p.name)} - ${formatPrice(p.price)}</p>`; }).join('') : '<p>No items in wishlist yet!</p>';
+  $('#wishlist-modal').style.display='flex';
+});
+$('#close-wishlist').addEventListener('click',()=>$('#wishlist-modal').style.display='none');
+
+$('#orders-btn').addEventListener('click',()=>{
+  $('#orders-items').innerHTML = ordersList.length ? ordersList.map(o=>`<p>${escapeHtml(o.name)} × ${o.qty} - ${formatPrice(o.price*o.qty)}</p>`).join('') : '<p>No orders placed yet!</p>';
+  $('#orders-modal').style.display='flex';
+});
+$('#close-orders').addEventListener('click',()=>$('#orders-modal').style.display='none');
+
+// ===== INIT =====
+renderProducts(products);
+</script>
+
+</body>
+</html>
